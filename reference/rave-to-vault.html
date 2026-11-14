@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · Vault EDC design cheat sheet</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main class="wide">
+<p class="kicker">Vault EDC study build · Reference</p>
+<h1>Vault EDC design cheat sheet</h1>
+<p class="subtitle">The structure, the vocabulary, and the translation from Rave, on one printable page.</p>
+
+<div class="split">
+<div>
+<h3>Schedule tree: when</h3>
+<ul class="tree">
+  <li><span class="v">Study</span>
+    <ul><li><span class="v">Casebook Definition</span><span class="tag">one per version</span>
+      <ul><li><span class="v">Event Group</span><span class="tag">repeating = Cycle</span>
+        <ul><li><span class="v">Event</span><span class="tag">a visit</span>
+          <ul><li><span class="v">Form</span><span class="tag">can repeat</span></li></ul>
+        </li></ul>
+      </li></ul>
+    </li></ul>
+  </li>
+</ul>
+</div>
+<div>
+<h3>Form tree: what</h3>
+<ul class="tree">
+  <li><span class="v">Form</span>
+    <ul><li><span class="v">Item Group</span><span class="tag">can repeat: Form / Read Only Grid / Editable Grid</span>
+      <ul><li><span class="v">Item</span><span class="tag">a field</span>
+        <ul><li><span class="v">Codelist</span> · <span class="v">Unit</span></li></ul>
+      </li></ul>
+    </li></ul>
+  </li>
+</ul>
+</div>
+</div>
+
+<h2>Key facts</h2>
+<table>
+<tbody>
+<tr><td><strong>Definition vs execution</strong></td><td>Studio creates <em>definition</em> records. At casebook creation, Vault copies each one into an <em>execution</em> record per subject (Event Definition → Event).</td></tr>
+<tr><td><strong>Surfacing</strong></td><td>Only the first Event Group appears automatically. Later ones need an <code>Add Event Group</code> rule. Rules can also add Events and Forms.</td></tr>
+<tr><td><strong>Rules can…</strong></td><td>raise a query · show Event Groups / Events / Forms · enable or disable Items / Item Groups · derive values</td></tr>
+<tr><td><strong>Item Types</strong></td><td><code>EDC</code> collected · <code>Status</code> subject status / IDs · <code>Header</code> casebook header · <code>Read-only</code> set by API · <code>Derived</code> set by rule · <code>Reference</code>, <code>Lab</code> for local labs</td></tr>
+<tr><td><strong>Reserved names</strong></td><td>Avoid Study ID, Country, Site, Subject ID, Event, Event Date, Event Sequence, Form, Form Sequence, Item Group, Item Group Sequence</td></tr>
+<tr><td><strong>Lifecycle</strong></td><td>Build → <em>Validate</em> (CSV of errors/warnings) → <em>Publish</em> (definitions read-only except rules) → deploy → <em>Create New Version</em> for changes</td></tr>
+</tbody>
+</table>
+
+<h2>Rave → Vault (nearest analogues, not 1:1)</h2>
+<table>
+<thead><tr><th>Rave</th><th>Vault EDC</th></tr></thead>
+<tbody>
+<tr><td class="o">Architect</td><td><span class="v">Studio</span></td></tr>
+<tr><td class="o">CRF version / draft</td><td><span class="v">Casebook Definition</span> version</td></tr>
+<tr><td class="o">Matrix (folders × forms)</td><td><span class="v">Schedule</span></td></tr>
+<tr><td class="o">Folder</td><td><span class="v">Event</span> within an <span class="v">Event Group</span></td></tr>
+<tr><td class="o">Add-matrix / folder edit check</td><td><span class="v">Add Event Group / Add Event / Add Form</span> rule</td></tr>
+<tr><td class="o">Field</td><td><span class="v">Item</span></td></tr>
+<tr><td class="o">Log form / log line</td><td>Repeating <span class="v">Item Group</span> or repeating <span class="v">Form</span></td></tr>
+<tr><td class="o">Data dictionary / unit dictionary</td><td><span class="v">Codelist</span> / <span class="v">Unit</span></td></tr>
+<tr><td class="o">Edit check, derivation, custom function</td><td><span class="v">User Defined Rule</span> (expression engine V2)</td></tr>
+<tr><td class="o">Subject record</td><td><span class="v">Casebook</span></td></tr>
+</tbody>
+</table>
+
+<p class="sources">Sources: Veeva Clinical Data Help: <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Study Design Process Overview</a>, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Creating Forms, Item Groups &amp; Items</a>, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-events/">Creating Event Groups &amp; Events</a>, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/casebook-versions/">Casebook Versions</a>. The Rave column is the course's own mapping. Taught in <a href="../lessons/0001-vault-design-hierarchy.html">Lesson 1</a>.</p>
+</main>
+</body>
+</html>

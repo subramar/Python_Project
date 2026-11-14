@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 · The Vault EDC design hierarchy</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+
+<p class="kicker">Vault EDC study build · Lesson 1 of 6 · ~15 minutes</p>
+<h1>The shape of a Vault study</h1>
+<p class="subtitle">You already know how to build a study. This lesson gives you Vault's names for the parts, and the one idea that works differently.</p>
+
+<div class="mission">
+  <strong>Why this matters for the interview</strong>
+  "Walk me through how a study is structured in Vault" is a near-certain opening question. Today's win: you can answer it in about 60 seconds using Veeva's own vocabulary, and place any piece of your old build in the Vault structure.
+</div>
+
+<h2>1 · Two trees, one schedule</h2>
+
+<p>Every study design in Vault EDC is built in <span class="v">Studio</span>.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Veeva</a> It helps to see the design as two trees joined at the <span class="v">Form</span>:</p>
+
+<div class="split">
+<div>
+<h3>The schedule tree: <em>when</em></h3>
+<ul class="tree">
+  <li><span class="v">Study</span>
+    <ul><li><span class="v">Casebook Definition</span><span class="tag">a version</span>
+      <ul><li><span class="v">Event Group</span><span class="tag">phase, e.g. Treatment</span>
+        <ul><li><span class="v">Event</span><span class="tag">a visit</span>
+          <ul><li><span class="v">Form</span></li></ul>
+        </li></ul>
+      </li></ul>
+    </li></ul>
+  </li>
+</ul>
+</div>
+<div>
+<h3>The form tree: <em>what</em></h3>
+<ul class="tree">
+  <li><span class="v">Form</span>
+    <ul><li><span class="v">Item Group</span><span class="tag">section / log</span>
+      <ul><li><span class="v">Item</span><span class="tag">a field</span>
+        <ul><li><span class="v">Codelist</span> or <span class="v">Unit</span><span class="tag">if needed</span></li></ul>
+      </li></ul>
+    </li></ul>
+  </li>
+</ul>
+</div>
+</div>
+
+<p>Veeva's wording: "Each <em>Event</em> represents a visit in your study. <em>Events</em> are grouped into <em>Event Groups</em>."<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-events/">Veeva</a> And on the form side: "On each form, there are a number of <em>Items</em> which represent a question or field. <em>Items</em> are grouped into <em>Item Groups</em>."<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a> You drag and drop the pieces into place in <strong>Studio › Schedule</strong>.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Veeva</a></p>
+
+<p>Above it all sits the <span class="v">Casebook Definition</span>: one record per <em>version</em> of your design, holding "all the relationships between your study definition object records and data validation rules."<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/casebook-versions/">Veeva</a> Versioning gets its own lesson later. For now, think of it as "the CRF version".</p>
+
+<h2>2 · The idea that works differently: definitions vs execution</h2>
+
+<p>Everything you create in Studio is a <span class="v">definition</span> record, even though Studio leaves off the word "Definition" (you see "Form", but you're creating a <em>Form Definition</em>).<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a> When a site creates a subject's <span class="v">casebook</span>, Vault <strong>copies</strong> each definition into an <span class="v">execution</span> record for that subject:</p>
+
+<blockquote><p>"Vault creates a copy of your <em>Event Definition</em> record as an <em>Event</em>, or visit, record for each casebook."<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Veeva</a></p></blockquote>
+
+<p>So <code>Screening</code> in Studio is one Event <em>Definition</em>. If 300 subjects are enrolled, there are 300 Screening <em>Event</em> records, one inside each casebook. The data hangs off the execution records. This is why you'll hear Vault people say "definition" and "casebook" so often, and it's the basis for how amendments work in lesson 4.</p>
+
+<h2>3 · Three things a newcomer gets wrong</h2>
+
+<h3>(a) Only the first Event Group shows up by itself</h3>
+<p>In a new casebook, sites see only the first Event Group. "At a minimum, you must use <em>Add Event Group</em> to surface any <em>Event Groups</em> after the first <em>Event Group</em> in a <em>Study</em>."<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Veeva</a> So "Treatment" and "Follow-up" stay hidden until a <em>rule</em> adds them. Rules can also surface Events and Forms based on the data entered.</p>
+
+<h3>(b) Repetition happens at three levels</h3>
+<table>
+<thead><tr><th>Level</th><th>Switch</th><th>Typical use</th></tr></thead>
+<tbody>
+<tr><td><span class="v">Event Group</span></td><td>Repeating, which makes it a <em>Cycle</em><a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-events/">Veeva</a></td><td>Oncology treatment cycles</td></tr>
+<tr><td><span class="v">Form</span></td><td>Repeating + Repeat Maximum<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a></td><td>One AE per form instance</td></tr>
+<tr><td><span class="v">Item Group</span></td><td>Repeating + Display Format: <em>Form</em>, <em>Read Only Grid</em>, or <em>Editable Grid</em><a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a></td><td>Con-med log typed into a grid</td></tr>
+</tbody>
+</table>
+<p>Editable Grid works only on <em>repeating</em> Item Groups and can't hold Label items.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a></p>
+
+<h3>(c) An Item's type decides where its value comes from</h3>
+<p>Besides plain <span class="v">EDC</span> items, there are <span class="v">Status</span> (changes subject status / sets IDs), <span class="v">Header</span> (shows in the casebook header), <span class="v">Read-only</span> (set by API), and <span class="v">Derived</span> ("set by a rule and will be Read-only in the EDC UI").<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a> Don't name items with reserved words such as <code>Subject ID</code>, <code>Event Date</code>, <code>Site</code>. Vault already captures these and they break SAS conversion.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Veeva</a></p>
+
+<h2>4 · Translating from your old EDC</h2>
+<p>If you came from <span class="o">Medidata Rave</span>, these are the <em>nearest analogues</em>. They're not exact one-to-one matches, and this mapping is mine, not Veeva's. If you used a different EDC, tell me and I'll swap the column.</p>
+<table>
+<thead><tr><th>Rave (your old world)</th><th>Vault EDC</th></tr></thead>
+<tbody>
+<tr><td class="o">Architect</td><td><span class="v">Studio</span></td></tr>
+<tr><td class="o">CRF version / draft</td><td><span class="v">Casebook Definition</span> (version)</td></tr>
+<tr><td class="o">Matrix of folders × forms</td><td><span class="v">Schedule</span>: Event Groups → Events → Forms</td></tr>
+<tr><td class="o">Folder (visit)</td><td><span class="v">Event</span>, grouped in an <span class="v">Event Group</span></td></tr>
+<tr><td class="o">Adding a matrix / folder by edit check</td><td><span class="v">Add Event Group</span> / Add Event / Add Form rule</td></tr>
+<tr><td class="o">Field</td><td><span class="v">Item</span>, inside an <span class="v">Item Group</span></td></tr>
+<tr><td class="o">Log form / log lines</td><td>Repeating <span class="v">Item Group</span> (or repeating Form)</td></tr>
+<tr><td class="o">Data dictionary / unit dictionary</td><td><span class="v">Codelist</span> / <span class="v">Unit</span></td></tr>
+<tr><td class="o">Edit check / derivation</td><td><span class="v">User Defined Rule</span> (e.g. query or derive action). Lesson 3</td></tr>
+<tr><td class="o">Subject (and its data)</td><td><span class="v">Casebook</span> of execution records</td></tr>
+</tbody>
+</table>
+<p>A printable version is in the reference sheet: <a href="../reference/rave-to-vault.html">Rave → Vault cheat sheet</a>.</p>
+
+<hr>
+
+<h2>Practice</h2>
+
+<div class="exercise order" data-solution="Study|Casebook Definition|Event Group|Event|Form|Item Group|Item">
+  <h3>Exercise 1 · Build the hierarchy from memory</h3>
+  <p>Without scrolling up, click the pieces from the <em>top</em> of the design to the <em>bottom</em>.</p>
+</div>
+<script src="../assets/order.js"></script>
+
+<div class="exercise quiz">
+  <h3>Exercise 2 · Interview-style checks</h3>
+
+  <div class="q" data-answer="1">
+    <p class="q-stem">1. In Vault EDC, what is the direct parent of an <em>Item</em>?</p>
+    <div class="q-opts">
+      <button class="opt">The Form itself</button>
+      <button class="opt">An Item Group</button>
+      <button class="opt">The Event Definition</button>
+      <button class="opt">A Codelist Definition</button>
+    </div>
+    <p class="why">Forms contain Item Groups, and Item Groups contain Items. A Codelist hangs <em>below</em> an Item, as its list of choices.</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <p class="q-stem">2. Your design is published. A site creates subject 101-001. What does Vault create for that subject's Screening visit?</p>
+    <div class="q-opts">
+      <button class="opt">Nothing until data is entered</button>
+      <button class="opt">A link to the definition</button>
+      <button class="opt">A copy as execution record</button>
+      <button class="opt">A new casebook version only</button>
+    </div>
+    <p class="why">At casebook creation, Vault copies the Event Definition into an Event (execution) record for that casebook.</p>
+  </div>
+
+  <div class="q" data-answer="3">
+    <p class="q-stem">3. Your schedule has Screening, Treatment and Follow-up Event Groups and no rules yet. What does a site see in a new casebook?</p>
+    <div class="q-opts">
+      <button class="opt">All three event groups</button>
+      <button class="opt">No event groups yet</button>
+      <button class="opt">Whatever the matrix shows</button>
+      <button class="opt">Only the first group</button>
+    </div>
+    <p class="why">Event Groups after the first must be surfaced with an <em>Add Event Group</em> rule. Building that rule is a classic first task.</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <p class="q-stem">4. The protocol has a 28-day treatment cycle that repeats up to 12 times. What models it?</p>
+    <div class="q-opts">
+      <button class="opt">Repeating Event Group</button>
+      <button class="opt">Repeating Item Group</button>
+      <button class="opt">Repeating Form definition</button>
+      <button class="opt">Twelve separate Events</button>
+    </div>
+    <p class="why">A repeating Event Group is what Vault calls a <em>Cycle</em>. Each cycle holds its own visits (Events).</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <p class="q-stem">5. Sites want to type con-meds into a table, both while editing and after submitting. Which setting do you use?</p>
+    <div class="q-opts">
+      <button class="opt">Read Only Grid format</button>
+      <button class="opt">Header item type setting</button>
+      <button class="opt">Editable Grid display format</button>
+      <button class="opt">Form display format setting</button>
+    </div>
+    <p class="why">Editable Grid shows the repeating Item Group as a grid in both Edit and Submitted states. Read Only Grid shows a grid only after submission.</p>
+  </div>
+
+  <div class="q" data-answer="3">
+    <p class="q-stem">6. BMI must be calculated from height and weight and must not be editable by sites. Which Item Type?</p>
+    <div class="q-opts">
+      <button class="opt">EDC</button>
+      <button class="opt">Header</button>
+      <button class="opt">Status</button>
+      <button class="opt">Derived</button>
+    </div>
+    <p class="why">A Derived item's value is set by a rule and is read-only in the EDC UI.</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <p class="q-stem">7. Your first casebook version is published and the protocol is amended. In Studio, what's your first step?</p>
+    <div class="q-opts">
+      <button class="opt">Edit the published version</button>
+      <button class="opt">Create a new version</button>
+      <button class="opt">Delete and rebuild forms</button>
+      <button class="opt">Push a migration plan</button>
+    </div>
+    <p class="why">Publishing makes definitions read-only (rules excepted). Changes go into a new Casebook Definition version. Lesson 4 goes deeper.</p>
+  </div>
+</div>
+<script src="../assets/quiz.js"></script>
+
+<div class="exercise">
+  <h3>Exercise 3 · Say it out loud (60 seconds)</h3>
+  <p>Set a timer. Without looking, answer this aloud as if you're in the interview:</p>
+  <p><em>"How is a study design structured in Vault EDC, and how does it turn into a subject's casebook?"</em></p>
+  <details>
+    <summary>Compare with a model answer</summary>
+    <p>"In Vault you build in Studio. The design is a Casebook Definition, one per version, holding a schedule of Event Groups, which contain Events (the visits), which contain Forms. Each Form has Item Groups, and Item Groups have Items, which can use Codelists and Units. Everything in Studio is a definition. When a site creates a subject, Vault copies those definitions into execution records in that subject's casebook. Only the first Event Group appears automatically, so later ones are surfaced with Add Event Group rules. Repetition can be at the Event Group level for cycles, the Form level, or the Item Group level, which can be shown as an editable grid. Coming from Rave, it's the matrix-and-folder model, but with an explicit definition/execution split and versioned casebook definitions."</p>
+    <p class="sources">Check: did you mention (1) the hierarchy, (2) definition → execution copy, (3) Add Event Group? Those three are what set you apart from someone who only read a brochure.</p>
+  </details>
+</div>
+
+<hr>
+
+<div class="note">
+  <strong>Primary source: read this next (5 minutes)</strong>
+  Veeva's <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Study Design Process Overview</a>. It's one page, it's the official map of the build, and it uses the exact words interviewers will use.
+</div>
+
+<div class="note">
+  <strong>Stuck or curious?</strong>
+  Ask me follow-up questions in the chat at any point. For example: "How would InForm visits map?", "What does a casebook look like to a CRA?", or "Quiz me again on repeating levels." I'm your teacher for this, so use me.
+</div>
+
+<h3>Sources</h3>
+<ul class="sources">
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/study-design-process-overview/">Study Design Process Overview</a></li>
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-events/">Creating Event Groups &amp; Events</a></li>
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/creating-forms/">Creating Forms, Item Groups &amp; Items</a></li>
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/casebook-versions/">Working with Casebook Versions in Studio</a></li>
+</ul>
+
+<nav class="next">
+  <span><a href="../reference/rave-to-vault.html">Reference: Rave → Vault cheat sheet</a></span>
+  <span>Next: Lesson 2 · Building the schedule (coming up)</span>
+</nav>
+
+</main>
+</body>
+</html>
