@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 2 · Building the schedule</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main>
+
+<p class="kicker">Vault EDC study build · Lesson 2 of 6 · ~20 minutes</p>
+<h1>Building the schedule</h1>
+<p class="subtitle">How visits get their timing, how phases appear on their own, and how cycles repeat.</p>
+
+<div class="mission">
+  <strong>Why this matters for the interview</strong>
+  Expect a scenario question like "Here's an oncology protocol. How would you build the schedule?" Today's win: turn any protocol schedule of assessments into Vault schedule features (windows, unscheduled groups, cycles and dynamic rules) and explain why each one is there.
+</div>
+
+<p>Recap from <a href="0001-vault-design-hierarchy.html">Lesson 1</a>: the schedule is <span class="v">Event Groups</span> → <span class="v">Events</span> → <span class="v">Forms</span>, and only the first Event Group appears in a new casebook by itself. Today we fill in the rest.</p>
+
+<h2>1 · What kind of visit is it?</h2>
+
+<p>Two properties classify the schedule:<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/edc/studio/design-properties-reference/">Veeva</a></p>
+<table>
+<thead><tr><th>Property</th><th>On</th><th>Values</th></tr></thead>
+<tbody>
+<tr><td><strong>Event Group Type</strong></td><td>Event Group</td><td><code>EDC</code> (the default, meaning <em>scheduled</em>) or <em>Unscheduled</em>, for ad-hoc visits the protocol doesn't plan</td></tr>
+<tr><td><strong>Event Type</strong></td><td>Event</td><td><code>EDC</code>, <code>Screened</code>, <code>Enrolled</code>, <code>Log</code></td></tr>
+</tbody>
+</table>
+<p>One trap here: "Don't mark <em>Log</em>-type <em>Event Groups</em> as <em>Repeating</em>." Doing that causes a publishing validation error, and the design won't deploy.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Veeva</a></p>
+
+<h2>2 · When is the visit due? Event windows</h2>
+
+<p>Each Event gets a <em>Planned Date</em> from three properties:<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/edc/studio/design-properties-reference/">Veeva</a></p>
+<ul>
+  <li><strong>Offset Type</strong>: count from a <em>Specific Event</em>, from the <em>Previous Event</em>, or choose <em>None</em> for no window.</li>
+  <li><strong>Offset Days</strong> (+ Offset Event Group / Event): how many days after that anchor the visit is due.</li>
+  <li><strong>Day Range Early / Day Range Late</strong>: widen the single date into a window.</li>
+</ul>
+<p>So "Week 4 is 28 days after Baseline, ±3 days" becomes: Offset Type = Specific Event (Baseline), Offset Days = 28, Day Range Early = 3, Day Range Late = 3. If a site enters an Event Date outside the window, <strong>Vault shows a warning</strong>. It doesn't block the save.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/edc/studio/design-properties-reference/">Veeva</a></p>
+
+<h2>3 · How do phases appear? Dynamic rules</h2>
+
+<p>Three rule actions build the schedule as the data comes in:<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/rules/">Veeva</a></p>
+<table>
+<thead><tr><th>Rule action</th><th>When the expression is true, Vault…</th><th>Typical use</th></tr></thead>
+<tbody>
+<tr><td><span class="v">Add Event Group</span></td><td>adds the Event Group to the casebook schedule</td><td>Show Treatment once eligibility is confirmed. Show Follow-up after End of Treatment.</td></tr>
+<tr><td><span class="v">Add Event</span></td><td>adds the Event</td><td>Add an extra visit only for certain subjects</td></tr>
+<tr><td><span class="v">Add Form</span></td><td>adds the Form</td><td>Add a pregnancy test only for females of childbearing potential</td></tr>
+</tbody>
+</table>
+<p>Veeva's docs call these "dynamic rules" and "Add Schedule-type" rules.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Veeva</a> Your Lesson 1 analogue: Rave's add-matrix / add-folder edit checks.</p>
+
+<h3>Processing order: a good detail to mention in an interview</h3>
+<p>After a site completes a Form, Vault runs rules by action type in this order:<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/rules/">Veeva</a></p>
+<ol>
+  <li><strong>Set Item Value / Set Derived Value</strong></li>
+  <li><strong>Dynamic rules</strong>: Add Event Group, Add Event, Add Form</li>
+  <li><strong>Query</strong></li>
+</ol>
+<p>The reason, in Veeva's words, is so "any Query-type rules that are affected by derived values or any added <em>Event Groups</em>, <em>Events</em>, and <em>Forms</em> can be processed with all expected data present."</p>
+
+<h2>4 · Cycles: repeating Event Groups</h2>
+
+<p>Tick <strong>Repeating</strong> on an Event Group, and optionally set a <strong>Repeat Maximum</strong>. Each repetition is a <em>sequence</em>.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Veeva</a> Then:</p>
+<ul>
+  <li><strong>You still need a rule for the first one.</strong> "You must create at least one <em>Add Schedule</em>-type rule to add the first repeating <em>Event Group</em> sequence to a <em>Casebook</em>. Data entry users will be able to add subsequent event groups manually." Sites can't go past the Repeat Maximum.</li>
+  <li><strong>Labels.</strong> <em>Prefix Label in Related Events</em> is ticked by default, so visits read "Cycle (1) - Visit 1", "Cycle (2) - Visit 1", and so on. <em>Repeating Event Overrides</em> let you give each sequence its own label <em>and its own window</em>.</li>
+  <li><strong>Rules across sequences.</strong> Use <code>[2]</code> for a specific sequence, or <code>[-1]</code> / <code>[+1]</code> for the previous or next one with <code>@</code> identifiers, e.g. <code>@EventGroup[-1].Visit1.event_date__v</code>.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/rules/">Veeva</a> Lesson 3 covers rule syntax properly.</li>
+</ul>
+
+<div class="note">
+  <strong>Veeva's own worked example</strong>
+  A treatment cycle that subjects complete 3 to 6 times: one repeating Event Group labelled "Treatment Cycle", Repeat Maximum = 6, with Events <em>Day 1</em> (treatment), <em>Day 8</em> and <em>Day 15</em> (follow-up), each holding its Forms. Add one Add Schedule-type rule to surface the first sequence. Sites add cycles 2 to 6 as needed.<a class="cite" href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Veeva</a> Using separate non-repeating groups instead would mean "a large amount of duplicate work" and confused sites.
+</div>
+
+<hr>
+
+<h2>Practice</h2>
+
+<div class="exercise match" data-options="Repeating Event Group|Add Event Group rule|Add Form rule|Event window (offset + day range)|Unscheduled Event Group|Repeating Event Overrides">
+  <h3>Exercise 1 · Protocol → Vault feature</h3>
+  <p>You've been handed this protocol. Pick the Vault feature that implements each requirement.</p>
+  <div class="m-row" data-answer="Repeating Event Group">a. Subjects receive 3–6 chemotherapy cycles, each with Day 1, Day 8 and Day 15 visits.</div>
+  <div class="m-row" data-answer="Add Event Group rule">b. The Follow-up phase must appear only once the End of Treatment form records that the subject completed treatment.</div>
+  <div class="m-row" data-answer="Add Form rule">c. A pregnancy test form is collected only for females of childbearing potential.</div>
+  <div class="m-row" data-answer="Event window (offset + day range)">d. Day 8 must occur 7 days after Day 1, ±1 day, and sites should be warned if it doesn't.</div>
+  <div class="m-row" data-answer="Unscheduled Event Group">e. Sites must be able to record ad-hoc safety visits that aren't in the schedule of assessments.</div>
+  <div class="m-row" data-answer="Repeating Event Overrides">f. Cycle 1 should display as "Induction", and Cycle 1's Day 8 window is ±2 days instead of ±1.</div>
+</div>
+<script src="../assets/match.js"></script>
+
+<div class="exercise quiz">
+  <h3>Exercise 2 · Quick checks (two are review questions from Lesson 1)</h3>
+
+  <div class="q" data-answer="2">
+    <p class="q-stem">1. "Treatment Cycle" is a repeating Event Group placed after Screening. Before sites can add Cycle 2 themselves, what must exist?</p>
+    <div class="q-opts">
+      <button class="opt">A Repeat Maximum value</button>
+      <button class="opt">A Log event type</button>
+      <button class="opt">An Add Schedule rule</button>
+      <button class="opt">A Header status item</button>
+    </div>
+    <p class="why">The first sequence is added by an Add Schedule-type rule (e.g. Add Event Group). After that, sites add sequences manually. Repeat Maximum is optional and only caps the number.</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <p class="q-stem">2. "Week 4 is 28 days after Baseline, ±3 days." Which properties do you set?</p>
+    <div class="q-opts">
+      <button class="opt">Offset plus day ranges</button>
+      <button class="opt">Repeat Maximum plus labels</button>
+      <button class="opt">Event Group Type setting</button>
+      <button class="opt">Add Event rule only</button>
+    </div>
+    <p class="why">Offset Type = Specific Event (Baseline), Offset Days = 28, Day Range Early/Late = 3.</p>
+  </div>
+
+  <div class="q" data-answer="3">
+    <p class="q-stem">3. A site enters a Week 4 date outside the window. What does Vault do?</p>
+    <div class="q-opts">
+      <button class="opt">Blocks the save</button>
+      <button class="opt">Deletes the event</button>
+      <button class="opt">Locks the casebook</button>
+      <button class="opt">Shows a warning</button>
+    </div>
+    <p class="why">Out-of-window dates trigger a warning. The data still saves.</p>
+  </div>
+
+  <div class="q" data-answer="1">
+    <p class="q-stem">4. One rule derives Age, one adds an Event Group based on Age, and one queries Age. In which order does Vault process them?</p>
+    <div class="q-opts">
+      <button class="opt">Query, then add, then derive</button>
+      <button class="opt">Derive, then add, then query</button>
+      <button class="opt">Add, then derive, then query</button>
+      <button class="opt">All three run in parallel</button>
+    </div>
+    <p class="why">Set/Derived values first, then dynamic rules, then queries, so queries see complete data.</p>
+  </div>
+
+  <div class="q" data-answer="2">
+    <p class="q-stem">5. <em>Review from Lesson 1.</em> Which record does a subject's entered data actually live on?</p>
+    <div class="q-opts">
+      <button class="opt">The Form Definition</button>
+      <button class="opt">The Casebook Definition</button>
+      <button class="opt">The execution record</button>
+      <button class="opt">The Codelist item</button>
+    </div>
+    <p class="why">Definitions are the template. Vault copies them into execution records in each casebook, and the data lives there.</p>
+  </div>
+
+  <div class="q" data-answer="3">
+    <p class="q-stem">6. <em>Review from Lesson 1.</em> To show con-meds as an Editable Grid, the Item Group must be…</p>
+    <div class="q-opts">
+      <button class="opt">Marked derived</button>
+      <button class="opt">Header type</button>
+      <button class="opt">Placed first</button>
+      <button class="opt">Marked repeating</button>
+    </div>
+    <p class="why">Grid display formats are available only for repeating Item Groups.</p>
+  </div>
+
+  <div class="q" data-answer="0">
+    <p class="q-stem">7. Sites need somewhere to record visits the protocol doesn't schedule. Which property handles this?</p>
+    <div class="q-opts">
+      <button class="opt">Event Group Type</button>
+      <button class="opt">Repeat Maximum value</button>
+      <button class="opt">Prefix Label setting</button>
+      <button class="opt">Offset Type field</button>
+    </div>
+    <p class="why">Set Event Group Type to Unscheduled. The default, EDC, means scheduled.</p>
+  </div>
+</div>
+<script src="../assets/quiz.js"></script>
+
+<div class="exercise">
+  <h3>Exercise 3 · Say it out loud (90 seconds)</h3>
+  <p><em>"Here's an oncology protocol: screening, then 3 to 6 treatment cycles with Day 1, 8 and 15 visits, then follow-up after end of treatment. Walk me through how you'd build the schedule in Vault."</em></p>
+  <details>
+    <summary>Compare with a model answer</summary>
+    <p>"I'd create three Event Groups. Screening is first, so it surfaces automatically. Treatment Cycle is a repeating Event Group with Repeat Maximum 6 and Events Day 1, Day 8 and Day 15. Each Event carries a window: Day 8 offset 7 days from Day 1 with a day range of, say, ±1, so sites get an out-of-window warning. I'd write an Add Event Group rule to add the first cycle once eligibility is confirmed on the screening forms. After that, sites add cycles 2 to 6 themselves, and the cap stops a seventh. Follow-up gets its own Add Event Group rule, triggered from the End of Treatment form. I'd also add an Unscheduled Event Group for ad-hoc visits, and conditional forms such as pregnancy tests would use Add Form rules. Because derivations run before dynamic rules and queries, anything like a derived eligibility flag is ready before the schedule rules fire."</p>
+    <p class="sources">Check: repeating Event Group + Repeat Maximum · Add Schedule rule for the first sequence · windows with offset + day ranges (warning, not block) · Add Event Group for follow-up · Unscheduled group. Bonus: processing order.</p>
+  </details>
+</div>
+
+<hr>
+
+<div class="note">
+  <strong>Primary source: read this next (5 minutes)</strong>
+  Veeva's <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Configuring Cycles (Repeating Event Groups)</a>. It's short and includes the worked oncology example above.
+</div>
+
+<div class="note">
+  <strong>Questions?</strong>
+  Ask me anything in the chat. For example: "How would a dose-escalation cohort study be scheduled?", "What's the difference between Add Event and Add Form in practice?", or "Give me another protocol to map."
+</div>
+
+<h3>Sources</h3>
+<ul class="sources">
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Configuring Cycles (Repeating Event Groups)</a></li>
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/edc/studio/design-properties-reference/">CDMS Design Properties Reference</a></li>
+  <li>Veeva, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/rules/">Creating Rules (V2)</a>: rule action types and processing order</li>
+</ul>
+
+<nav class="next">
+  <span><a href="0001-vault-design-hierarchy.html">← Lesson 1</a> · <a href="../reference/schedule-and-rule-actions.html">Reference: schedule &amp; rule actions</a></span>
+  <span>Next: Lesson 3 · Rule syntax (coming up)</span>
+</nav>
+
+</main>
+</body>
+</html>

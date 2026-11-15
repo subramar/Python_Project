@@ -119,3 +119,10 @@ summary { font-family: var(--sans); font-size: .9rem; cursor: pointer; color: va
   a { color: inherit; text-decoration: none; }
   h2 { break-after: avoid; } table, .tree { break-inside: avoid; }
 }
+
+/* Matching exercise (match.js) */
+.m-row { font-size: .95rem; padding: .7rem 0; border-bottom: 1px solid var(--rule); }
+.m-row:last-of-type { border-bottom: 0; }
+.m-select { font-family: var(--sans); font-size: .85rem; margin-top: .35rem; padding: .3rem .4rem; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); max-width: 100%; }
+.m-mark { font-family: var(--sans); font-weight: 600; margin-left: .4rem; }
+.m-mark.ok { color: var(--ok); } .m-mark.bad { color: var(--bad); }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference · Schedule & rule actions</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<main class="wide">
+<p class="kicker">Vault EDC study build · Reference</p>
+<h1>Schedule &amp; rule actions</h1>
+<p class="subtitle">Windows, cycles, dynamic rules and processing order, on one printable page.</p>
+
+<h2>Schedule properties</h2>
+<table>
+<thead><tr><th>Property</th><th>On</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td>Event Group Type</td><td>Event Group</td><td><code>EDC</code> (default, scheduled) or Unscheduled</td></tr>
+<tr><td>Event Type</td><td>Event</td><td><code>EDC</code> · <code>Screened</code> · <code>Enrolled</code> · <code>Log</code></td></tr>
+<tr><td>Offset Type</td><td>Event</td><td>Specific Event · Previous Event · None</td></tr>
+<tr><td>Offset Days (+ Offset Event Group/Event)</td><td>Event</td><td>Planned Date = anchor's actual date + N days</td></tr>
+<tr><td>Day Range Early / Late</td><td>Event</td><td>Widen the Planned Date into a window. Out of window → <strong>warning</strong>, not a block</td></tr>
+<tr><td>Repeating + Repeat Maximum</td><td>Event Group</td><td>Makes a Cycle. Each repetition is a sequence, and sites can't exceed the max</td></tr>
+<tr><td>Prefix Label in Related Events</td><td>Repeating Event Group</td><td>On by default: "Cycle (2) - Visit 1"</td></tr>
+<tr><td>Repeating Event Overrides</td><td>Repeating Event Group</td><td>Custom label and window per sequence</td></tr>
+</tbody>
+</table>
+
+<h2>Must-remember rules of the schedule</h2>
+<ul>
+  <li>Only the <strong>first</strong> Event Group surfaces automatically. Later ones need <code>Add Event Group</code>.</li>
+  <li>A repeating Event Group needs an Add Schedule-type rule for its <strong>first sequence</strong>. Sites add later sequences manually.</li>
+  <li>Never mark a <code>Log</code>-type Event Group as Repeating (publishing validation error).</li>
+  <li>Sequence references: <code>Cycle[2]</code> for a specific sequence, <code>@EventGroup[-1]</code> / <code>[+1]</code> for the previous/next one (needs an anchor identifier).</li>
+</ul>
+
+<h2>Rule action types</h2>
+<table>
+<thead><tr><th>Action</th><th>Effect when true</th></tr></thead>
+<tbody>
+<tr><td>Open Query</td><td>Query on an Item or Event Date (message ≤ 500 chars)</td></tr>
+<tr><td>Add Event Group / Add Event / Add Form</td><td>Adds it to the casebook schedule (dynamic rules)</td></tr>
+<tr><td>Set Derived Value</td><td>Populates a Derived Item with the expression result</td></tr>
+<tr><td>Set Subject Status</td><td>Changes subject status and records the date</td></tr>
+<tr><td>Disable</td><td>Disables an Item (not available when Rules Version = 2)</td></tr>
+<tr><td>Send Email</td><td>Emails a pre-configured recipient group</td></tr>
+<tr><td>Override Review Plan</td><td>Swaps the Form's default Review Plan</td></tr>
+<tr><td>Create Protocol Deviation</td><td>Creates a programmatic protocol deviation</td></tr>
+<tr><td>Set as Ready to Randomize</td><td>Enables randomization for the subject</td></tr>
+<tr><td>Assign Subject Latest Arm / Cohort / Substudy</td><td>Assigns the subject group</td></tr>
+</tbody>
+</table>
+<p class="sources">Some actions need Veeva Support to enable them, or specific vault settings. See the source.</p>
+
+<h2>Processing order after a Form is completed</h2>
+<ol>
+  <li><strong>Set Item Value / Set Derived Value</strong></li>
+  <li><strong>Dynamic</strong>: Add Event Group, Add Event, Add Form</li>
+  <li><strong>Query</strong></li>
+</ol>
+<p>Within each type: derivations → cross-form same-event → cross-form cross-event → all others → Send Email. Disable rules run on save of the controlling Item's Form, outside this order.</p>
+
+<p class="sources">Sources: Veeva Clinical Data Help: <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/configuring-cycles/">Configuring Cycles</a>, <a href="https://clinicaldata.veevavault.help/en/lr/edc/studio/design-properties-reference/">Design Properties Reference</a>, <a href="https://clinicaldata.veevavault.help/en/lr/study-designers/rules/">Creating Rules (V2)</a>. Taught in <a href="../lessons/0002-building-the-schedule.html">Lesson 2</a>.</p>
+</main>
+</body>
+</html>

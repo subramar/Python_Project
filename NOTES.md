@@ -7,8 +7,8 @@
 
 ## 2-day plan (draft; adjust after each lesson)
 Day 1
-1. 0001 Vault design hierarchy + definition vs execution, mapped from the prior EDC ✅ written
-2. 0002 Building the schedule: event groups, events, cycles (repeating event groups), dynamic surfacing with Add Event Group / Add Event / Add Form rules
+1. 0001 ✅ done (6/7, spoken OK). Vault design hierarchy + definition vs execution
+2. 0002 ✅ written. Building the schedule: event groups, events, cycles (repeating event groups), dynamic surfacing with Add Event Group / Add Event / Add Form rules
 3. 0003 Rules V2: `#define`, `@Form` (floating) vs `$` (fully qualified) identifiers, `[*]` / `[#]`, rule actions, blank handling
 Day 2
 4. 0004 Change lifecycle: validate → publish → deploy, casebook versions, update restrictions, destructive changes, casebook amendment
@@ -17,4 +17,6 @@ Day 2
 
 ## Preferences / working notes
 - Interview-oriented: every lesson ends with a "say it out loud" interview answer.
-- Hold off on GLOSSARY.md until the learner can use the Vault terms correctly (rule: add only understood terms). Vocabulary lives in reference/rave-to-vault.html for now.
+- GLOSSARY.md started after lesson 0001 (structure + record terms). Add schedule terms (window, sequence, unscheduled) once lesson 0002 results show they stick.
+- Still unconfirmed which EDC the learner used before; Rave columns remain.
+- Components in assets/: course.css, quiz.js (MCQ), order.js (sequence), match.js (requirement → feature dropdowns).
